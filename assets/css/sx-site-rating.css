@@ -1,0 +1,262 @@
+:root {
+    --sx-rating-star-color: #009688;
+    --sx-rating-inactive-color: #ccc;
+    --sx-rating-highlight-color: #34C8BA;
+    --sx-rating-centered: 0 auto;
+    --sx-rating-rerate-label:'Change Your Rating';
+}
+
+.sx-star i.active, i.active {
+    color: var(--sx-rating-star-color);
+    z-index: 1;
+}
+
+.sx-star i.inactive, i.inactive {
+    color: var(--sx-rating-inactive-color);
+}
+
+.sx-star-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.25rem;
+}
+
+.sx-star {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0 3px;
+}
+
+.sx-mo {
+    /*color: #333;*/
+    font-size: 4rem;
+    font-weight: lighter;
+    line-height: 1;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.sx-rating-info {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 20px;
+    text-align: center;
+    vertical-align: top;
+    min-width: 160px;
+}
+
+.sx-star i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sx-rating-total {
+    font-size: inherit;
+    font-weight: 300;
+    margin-bottom: 0.5rem !important;
+}
+
+.sx-rating-bars {
+    display: inline-block;
+    padding: 20px 20px 20px 30px;
+    vertical-align: top;
+    max-width: 425px;
+    /*line-height: 1.5rem;*/
+    font-size: 0.6875rem;
+    width: 80%;
+}
+
+.sx-bar-wrapper {
+    /*color: #737373;*/
+    font-weight: 400;
+    height: 20px;
+    margin-bottom: 4px;
+    position: relative;
+    width: 100%;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+}
+
+.sx-star-number {
+    left: -16px;
+    letter-spacing: 1px;
+    position: absolute;
+}
+
+.sx-bar {
+    transition: width .25s ease;
+    height: 100%;
+    opacity: .8;
+    width: 100%;
+    background: #57bb8a;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    min-width: 2%;
+}
+
+.sx-bar.bar-1 {
+    background-color: #ff6f31;
+}
+
+.sx-bar.bar-2 {
+    background-color: #ff9f02;
+}
+
+.sx-bar.bar-3 {
+    background-color: #ffcf02;
+}
+
+.sx-bar.bar-4 {
+    background-color: #9ace6a;
+}
+
+.sx-bar.bar-5 {
+    background-color: #57bb8a;
+}
+
+.sx-rating-widget-wrapper {
+    box-sizing: border-box;
+    padding: 20px;
+    text-align: center;
+    vertical-align: top;
+    /*min-width: 160px;*/
+    width: fit-content;
+    /*background-color: ghostwhite;*/
+    border-radius: 50px;
+    align-items: center;
+    padding-top: 0;
+    margin: var(--sx-rating-centered);
+}
+
+.sx-rating-widget-wrapper .sx-star-wrapper {
+    /*  max-width: 160px;*/
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sx-rating-widget-wrapper .sx-mo {
+    font-size: 4em;
+}
+
+.sx-rate-div {
+    text-align: center;
+    position: relative;
+}
+
+.sx-errors {
+    margin-top: 0.125rem;
+    color: red;
+}
+
+.sx-rate-form {
+    transition: max-height 0.3s;
+    max-height: 150px;
+    margin: auto;
+    width: fit-content;
+    overflow: hidden;
+    padding-bottom: 0.25rem;
+}
+
+.sx-rate-form.rated {
+    max-height: 1.4em;
+    cursor: pointer;
+}
+
+.sx-rate-form.rated:hover::before {
+    color: var(--sx-rating-highlight-color);
+}
+
+.sx-rate-form.rated::before {
+    content: var(--sx-rating-rerate-label)   '\2B9F';
+    font-size: 0.825em;
+    display: block;
+}
+
+.sx-rate-title.thanks {
+    animation: fly 3s forwards;
+    /*
+  position: absolute;
+   width: 100%;
+    left: 0;
+    right: 0;
+    /* bottom: -50%;
+    top: 100%;
+    white-space: nowrap;
+     */
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: block;
+    color: var(--sx-rating-star-color);
+    transform: translateY(50%)scale(1);
+
+}
+
+@keyframes fly {
+    0% {
+        opacity: 1;
+        transform: translateY(50%)scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-500%)scale(2);
+
+    }
+}
+
+form>.sx-star-wrapper {
+    flex-direction: row-reverse;
+    justify-content: center;
+    width: fit-content;
+}
+
+.sx-star-wrapper > input { display: none; }
+.sx-star-wrapper > label{display: inline-block;}
+.sx-star-wrapper > label:before {
+  margin: 5px;
+  font-size: 1.25em;
+  font-family: dashicons;
+  display: inline-block;
+  content: "\f155";
+}
+
+.sx-star-wrapper > label {
+  color: var(--sx-rating-inactive-color);
+  cursor: pointer;
+}
+
+
+/*https://codepen.io/jamesbarnett/pen/vlpkh?editors=1100*/
+.sx-star-wrapper > input:checked ~ label /* show gold star when clicked */
+ { color: var(--sx-rating-star-color);  } /* hover previous stars in list */
+
+ .sx-star-wrapper > input:active ~ label:before /* show gold star when clicked */
+  {
+  color: var(--sx-rating-star-color);
+  transform: scale(1.2);
+   } /* hover previous stars in list */
+
+ .sx-star-wrapper:hover >input:checked ~ label{
+   color:var(--sx-rating-inactive-color);
+ }
+
+.sx-star-wrapper > input:checked + label:hover, /* hover current star when changing rating */
+.sx-star-wrapper > input:checked ~ label:hover,
+.sx-star-wrapper > label:hover ~ input:checked ~ label, /* lighten current selection */
+.sx-star-wrapper > input:checked ~ label:hover ~ label { color: var(--sx-rating-highlight-color);  }
+
+
+.sx-star-wrapper:not(:checked) > label:hover, /* hover current star */
+.sx-star-wrapper:not(:checked) > label:hover ~ label{color: var(--sx-rating-highlight-color);}
