@@ -1,16 +1,8 @@
-=== Sx Site Rating ===
-Contributors: schizma79
-Donate link:
-Tags: rate, stars
-Requires at least: 5.3
-Tested up to: 5.3
-Stable tag: 5.3
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+# Sx Site Rating 
 
 A simple single rating plugin for your wordpress site
 
-== Description ==
+## Description 
 
 *Sx Site Rating* gives you the ability to add one or more widgets to your site asking and presenting
 a rating from the users. This rating is a single rating for your site, service, e-shop etc. If you need
@@ -38,14 +30,10 @@ General Settings include:
 
 
 
-== Installation ==
+## Installation 
 
 1.  Upload the plugin to the `/wp-content/plugins/` directory
 1.  Activate the plugin through the 'Plugins' menu in WordPress
 
 
 
-== Screenshots ==
-1. Widget look with the twenty twenty theme
-2. Settings - View Ratings
-3. Settings - Settings Page
