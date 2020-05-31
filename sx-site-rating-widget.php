@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
 	return;
 }
 
-include_once  plugin_dir_path(__FILE__) .'incl/rgb_hsl_converter.inc.php'; //for color transformation and hex validation
+include_once plugin_dir_path(__FILE__) . 'incl/rgb_hsl_converter.inc.php'; //for color transformation and hex validation
 
 class Sx_Site_Rating_Widget extends WP_Widget {
 	private $__ratings; // the ratings option from db
@@ -17,6 +17,10 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 	public function __construct() {
 		$this->__defaults = array(
 			'title'           => '',
+			'rate_label'      => '',
+			'thanks_label'    => '',
+			'resubmit_label'  => __('Change your rating', 'sx'),
+			'votes_label'     => '',
 			'star_color'      => '#009688',
 			'highlight_color' => '#34C8BA',
 			'inactive_color'  => '#cccccc',
@@ -52,7 +56,7 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget($args, $instance) {
-		//$ratings = get_option('sx_ratings', array());
+
 		$title = apply_filters('widget_title', $instance['title']);
 		echo $args['before_widget'];
 		$id = $this->id;
@@ -66,6 +70,7 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 					--sx-rating-highlight-color:<?php echo ($instance['highlight_color'] == $this->__defaults['highlight_color'] ? 'inherit' : $instance['highlight_color']); ?>;
 					--sx-rating-inactive-color:<?php echo ($instance['inactive_color'] == $this->__defaults['inactive_color'] ? 'inherit' : $instance['inactive_color']); ?>;
 					--sx-rating-centered : <?php echo ($instance['centered'] == $this->__defaults['centered'] ? 'inherit' : '0'); ?>;
+					--sx-rating-rerate-label: <?php echo ($instance['resubmit_label'] == $this->__defaults['resubmit_label'] ? 'inherit' : '"'.esc_attr($instance['resubmit_label']).'"'); ?>;
 				}
 		  	</style>
 
@@ -99,13 +104,27 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 		<?php } ?>
 
 
-		<?php if ($instance['show_votes'] ) { ?>
-			<p class="sx-rating-total"><?php echo __('based on', 'sx') . ' <strong>' . $this->__total_number . '</strong> ' . __('votes', 'sx'); ?></p>
+		<?php if ($instance['show_votes']) {
+			$parts = explode("#", $instance['votes_label']);//esc_attr
+			$string="";
+			if(count($parts)>1){
+				$string.=esc_attr(array_shift ($parts));
+				$string.=' <strong>' . $this->__total_number . '</strong> ';
+				foreach ($parts as $key => $value) {
+					$string.= esc_attr($value);
+				}
+			}else{
+				$string.=esc_attr($instance['votes_label']) .' <strong>' . $this->__total_number . '</strong> ';
+			}
+
+			?>
+			<p class="sx-rating-total"><?php echo $string; ?></p>
 		<?php } ?>
 
 		<?php if ($instance['show_voting'] && $this->__settings['voting']) { ?>
 		  	<div class="sx-rate-div">
-			    <span class="sx-rate-title"> <?php echo ((int)$this->__user_rate != "" ? "" : __('Rate Us!', 'sx')); ?></span>
+			    <span class="sx-rate-title <?php echo ((int)$this->__user_rate != "" ? "hide" : ""); ?>"><?php echo $instance['rate_label']; ?></span>
+				<span class="sx-rate-title-thanks "><?php echo $instance['thanks_label']; ?></span>
 			    <form class="sx-rate-form <?php echo ((int)$this->__user_rate != "" ? "rated" : ""); ?>" >
 				    <div class="sx-star-wrapper">
 			<?php
@@ -142,6 +161,23 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 	    <p>
 	        <label for="<?php echo $this->get_field_name('title'); ?>"><?php _e('Title:', 'sx'); ?></label>
 	        <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>" placeholder="<?php echo __('Widget title', 'sx'); ?>" />
+		</p>
+		<p>
+	        <label for="<?php echo $this->get_field_name('rate_label'); ?>"><?php _e('"Rate us" Label:', 'sx'); ?></label>
+	        <input class="widefat" id="<?php echo $this->get_field_id('rate_label'); ?>" name="<?php echo $this->get_field_name('rate_label'); ?>" type="text" value="<?php echo esc_attr($instance['rate_label']); ?>" placeholder="<?php echo __('Rate Us!', 'sx'); ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_name('thanks_label'); ?>"><?php _e('"Thank you" Label:', 'sx'); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id('thanks_label'); ?>" name="<?php echo $this->get_field_name('thanks_label'); ?>" type="text" value="<?php echo esc_attr($instance['thanks_label']); ?>" placeholder="<?php echo __('Thank You!', 'sx'); ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_name('resubmit_label'); ?>"><?php _e('"Change your rating" Label:', 'sx'); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id('resubmit_label'); ?>" name="<?php echo $this->get_field_name('resubmit_label'); ?>" type="text" value="<?php echo esc_attr($instance['resubmit_label']); ?>" placeholder="<?php echo __('Change your rating', 'sx'); ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_name('votes_label'); ?>"><?php _e('"Total Votes" Label:', 'sx'); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id('votes_label'); ?>" name="<?php echo $this->get_field_name('votes_label'); ?>" type="text" value="<?php echo esc_attr($instance['votes_label']); ?>" placeholder="<?php echo __('based on # votes', 'sx'); ?>" />
+			<span><small><?php _e('Use a # in place of the number of votes. If no #, the number of votes will be placed at the end.','sx') ?></small></span>
 		</p>
 		<p>
     		<label for="<?php echo $this->get_field_id('star_color'); ?>" > <span> <?php _e('Rated Star Color:', 'sx'); ?></span> </label><br />
@@ -186,14 +222,18 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 	 * @return array Updated safe values to be saved.
 	 */
 	public function update($new_instance, $old_instance) {
-		$instance          = array();
-		$instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+		$instance                   = array();
+		$instance['title']          = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+		$instance['rate_label']     = (!empty($new_instance['rate_label'])) ? strip_tags($new_instance['rate_label']) : __('Rate Us!', 'sx');
+		$instance['thanks_label']   = (!empty($new_instance['thanks_label'])) ? strip_tags($new_instance['thanks_label']) : __('Thank You!', 'sx');
+		$instance['resubmit_label'] = (!empty($new_instance['resubmit_label'])) ? strip_tags($new_instance['resubmit_label']) : __('Change your rating', 'sx');
+		$instance['votes_label']    = (!empty($new_instance['votes_label'])) ? strip_tags($new_instance['votes_label']) : __('based on # votes', 'sx');
 
 		if (!empty($new_instance['star_color'])) { //todo: needs better code here
 			if (function_exists('hex2hsl')) {
 				$hsl = hex2hsl($new_instance['star_color']);
 
-				if ($hsl[2] > 0.55) {
+				if ($hsl[2] > 0.55) { //auto hightlight color +-20% lightness
 					$hsl[2] = $hsl[2] - 0.2;
 				} else {
 					$hsl[2] = $hsl[2] + 0.2;
@@ -228,7 +268,7 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 		if (!$this->__settings['voting']) {
 			return;
 		}
-		//$ratings      = get_option('sx_ratings', false);
+
 		$result       = array('success' => 1, 'message' => '');
 		$ratingCookie = isset($_COOKIE['sx_rating']) ? unserialize(base64_decode($_COOKIE['sx_rating'])) : "";
 		$star         = isset($_POST['rating']) ? $_POST['rating'] : 0;
@@ -237,7 +277,7 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 		if (!$this->__ratings) {
 			$result['success'] = 0;
 			$result['message'] = __('Something went wrong. Try again later', 'sx');
-		} elseif ($ratingCookie == $star) {
+		} elseif ($ratingCookie == $star) { //if the rating is the same return error (reconsider this)
 			$result['success'] = 0;
 			$result['message'] = __('Please choose a different rating!', 'sx');
 		} else {
@@ -261,7 +301,7 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 				$result['total_number'] = $this->__total_number;
 			} else {
 				$result['success'] = 0;
-				$result['message'] = __('Something went wrong. Try again laterzzz', 'sx');
+				$result['message'] = __('Something went wrong.', 'sx');
 			}
 		}
 

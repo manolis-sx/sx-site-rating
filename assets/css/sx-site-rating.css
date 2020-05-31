@@ -180,8 +180,13 @@
     font-size: 0.825em;
     display: block;
 }
-
-.sx-rate-title.thanks {
+.sx-rate-title.hide{
+    display: none;
+}
+.sx-rate-title-thanks{
+    display: none;
+}
+.sx-rate-title-thanks.fly {
     animation: fly 3s forwards;
     /*
   position: absolute;

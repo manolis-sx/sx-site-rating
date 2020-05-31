@@ -4,7 +4,7 @@
 
     $(".sx-rate-form.rated").on('click', function() {
       $( this ).removeClass('rated');
-      $( this ).siblings(".sx-rate-title").html(sx_rating_object.text.rate_it).show()
+      $( this ).siblings(".sx-rate-title").removeClass('hide')
     })
 
 
@@ -37,12 +37,12 @@
               $this.html(sx_rating_object.text.submit);
               $('.sx-rate-form .sx-star-wrapper' ).children('input[value='+val+']').prop('checked', true).trigger("click")
 
-              $(".sx-rate-title").html("");
-              $this.parent().siblings(".sx-rate-title").html(sx_rating_object.text.thank_you).addClass('thanks').delay(3000).hide(0)
+              $(".sx-rate-title").addClass('hide');
+              $this.parent().siblings(".sx-rate-title-thanks").addClass('fly').delay(3000).queue(function(){ $(this).removeClass("fly").dequeue();  });
               $(".sx-rate-form").addClass('rated');
               $(".sx-rate-form.rated").on('click', function() {
                  $( this ).removeClass('rated');
-                 $( this ).siblings(".sx-rate-title").html(sx_rating_object.text.rate_it).removeClass('thanks').show()
+                 $( this ).siblings(".sx-rate-title").removeClass('hide')
               })
               //update mo and total number
               $('.sx-mo').each(function(i){

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Sx Site Rating
  * Plugin URI: ''
- * Description: A rating plugin for your site
+ * Description: A simple rating plugin for your site
  * Version: 0.9.0
  * Author: Manolis Schizakis
  * Author URI: ''
@@ -281,11 +281,8 @@ function load_plugin_assets() {
 		'ajax_url' => admin_url('admin-ajax.php'),
 		'nonce'    => wp_create_nonce('sx_rating'),
 		'text'     => array(
-			'close_rating' => __('Close rating', 'sx'),
-			'rate_it'      => __('Rate us!', 'sx'),
 			'choose_rate'  => __('Please choose a rate', 'sx'),
 			'submitting'   => __('Submitting...', 'sx'),
-			'thank_you'    => __('Thank you!', 'sx'),
 			'submit'       => __('Submit', 'sx'),
 		),
 	));
@@ -296,6 +293,7 @@ add_action('wp_enqueue_scripts', 'load_plugin_assets');
 
 //load script for admin settings
 function load_admin_assets($hook) {
+	wp_enqueue_style('sx-site-rating-css', plugin_dir_url(__FILE__) . 'assets/css/sx-site-rating.css', array(), '', 'screen');
 	if ('sx-site-rating_page_sx-rating-settings' != $hook) {
 		return;
 	}
