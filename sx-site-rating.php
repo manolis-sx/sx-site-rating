@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Sx Site Rating
- * Plugin URI: ''
- * Description: A simple rating plugin for your site
- * Version: 0.9.0
+ * Plugin URI: 'https://github.com/manolis-sx/sx-site-rating'
+ * Description: A simple rating plugin for your wordpress site
+ * Version: 0.9.1
  * Author: Manolis Schizakis
  * Author URI: ''
  * License:           GPL-2.0+
