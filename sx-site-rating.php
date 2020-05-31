@@ -5,7 +5,7 @@
  * Description: A simple rating plugin for your wordpress site
  * Version: 0.9.1
  * Author: Manolis Schizakis
- * Author URI: ''
+ * Author URI: 'https://schizakis.wordpress.com/'
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  */
