@@ -2,6 +2,8 @@
 
 A simple single rating plugin for your wordpress site
 
+![Screenshot](assets/Screenshot-1.png)
+
 ## Description
 
 *Sx Site Rating* gives you the ability to add one or more widgets to your site asking and presenting
@@ -37,11 +39,11 @@ General Settings include:
 
 
 
-## Changelog ==
+## Changelog
 
 ### 0.9.2
 * fixed submission issues.
 
 
-### 0.9.1 
+### 0.9.1
 * initial submission.
