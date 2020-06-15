@@ -2,7 +2,7 @@
 
 A simple single rating plugin for your wordpress site
 
-![Screenshot](assets/Screenshot-1.png)
+![Screenshot](assets/screenshot-1.png)
 
 ## Description
 
