@@ -3,7 +3,7 @@
  * Plugin Name: Sx Site Rating
  * Plugin URI: 'https://github.com/manolis-sx/sx-site-rating'
  * Description: A simple rating plugin for your wordpress site
- * Version: 0.9.1
+ * Version: 0.9.2
  * Author: Manolis Schizakis
  * Author URI: 'https://schizakis.wordpress.com/'
  * License:           GPL-2.0+
@@ -57,12 +57,12 @@ function sx_site_rating_menu() {
 		'dashicons-star-filled',
 		30
 	);
-	add_submenu_page('sx-rating', 'View Ratings', 'View Ratings', 'manage_options', 'sx-rating', 'sx_view_ratings');
+	add_submenu_page('sx-rating', 'View Ratings', 'View Ratings', 'manage_options', 'sx-rating', 'sx_rating_view_ratings');
 	add_submenu_page('sx-rating', 'Settings', 'Settings', 'manage_options', 'sx-rating-settings', 'sx_rating_settings');
 }
 
 // View Ratings Page
-function sx_view_ratings() {
+function sx_rating_view_ratings() {
 	$ratings = get_option('sx_ratings', array()); ?>
 	<div class="wrap">
 		<h1><?php echo __(get_admin_page_title(), 'sx') ?></h1>
@@ -235,7 +235,8 @@ function sx_rating_settings_reset() {
 
 function sx_reset_rating_settings_validate() {
 	if (isset($_POST['reset-message'])) { //maybe check $input[]?
-		add_settings_error('sx_reset_rating_settings', 'sx_reset_rating_settings', __($_POST['reset-message'], 'sx'), 'updated');
+		$message=sanitize_text_field( $_POST['reset-message'] );
+		add_settings_error('sx_reset_rating_settings', 'sx_reset_rating_settings', $message, 'updated');
 	}
 	return;
 }
@@ -273,7 +274,7 @@ function sx_reset_rating() {
 add_action('wp_ajax_sx_reset_rating', 'sx_reset_rating');
 
 //load script and styles
-function load_plugin_assets() {
+function sx_rating_load_plugin_assets() {
 
 	wp_enqueue_style('sx-site-rating-css', plugin_dir_url(__FILE__) . 'assets/css/sx-site-rating.css', array(), '', 'screen');
 	wp_register_script('sx-site-rating-js', plugin_dir_url(__FILE__) . 'assets/js/sx-site-rating.js', array('jquery'), '', true);
@@ -289,10 +290,10 @@ function load_plugin_assets() {
 	wp_enqueue_script('sx-site-rating-js');
 	wp_enqueue_style('dashicons');
 }
-add_action('wp_enqueue_scripts', 'load_plugin_assets');
+add_action('wp_enqueue_scripts', 'sx_rating_load_plugin_assets');
 
 //load script for admin settings
-function load_admin_assets($hook) {
+function  sx_rating_load_admin_assets($hook) {
 	wp_enqueue_style('sx-site-rating-css', plugin_dir_url(__FILE__) . 'assets/css/sx-site-rating.css', array(), '', 'screen');
 	if ('sx-site-rating_page_sx-rating-settings' != $hook) {
 		return;
@@ -308,5 +309,5 @@ function load_admin_assets($hook) {
 	wp_enqueue_script('sx-site-rating-admin-js');
 }
 if (is_admin()) {
-	add_action('admin_enqueue_scripts', 'load_admin_assets');
+	add_action('admin_enqueue_scripts', 'sx_rating_load_admin_assets');
 }

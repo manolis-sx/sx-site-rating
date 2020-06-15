@@ -1,8 +1,8 @@
-# Sx Site Rating 
+# Sx Site Rating
 
 A simple single rating plugin for your wordpress site
 
-## Description 
+## Description
 
 *Sx Site Rating* gives you the ability to add one or more widgets to your site asking and presenting
 a rating from the users. This rating is a single rating for your site, service, e-shop etc. If you need
@@ -30,10 +30,18 @@ General Settings include:
 
 
 
-## Installation 
+## Installation
 
 1.  Upload the plugin to the `/wp-content/plugins/` directory
 1.  Activate the plugin through the 'Plugins' menu in WordPress
 
 
 
+## Changelog ==
+
+### 0.9.2
+* fixed submission issues.
+
+
+### 0.9.1 
+* initial submission.

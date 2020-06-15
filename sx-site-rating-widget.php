@@ -3,7 +3,9 @@ if (!defined('ABSPATH')) {
 	return;
 }
 
-include_once plugin_dir_path(__FILE__) . 'incl/rgb_hsl_converter.inc.php'; //for color transformation and hex validation
+if (!function_exists('hex2hsl') || !function_exists('hsl2hex')){
+	include_once plugin_dir_path(__FILE__) . 'incl/rgb_hsl_converter.inc.php'; //for color transformation and hex validation
+}
 
 class Sx_Site_Rating_Widget extends WP_Widget {
 	private $__ratings; // the ratings option from db
@@ -123,14 +125,14 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 
 		<?php if ($instance['show_voting'] && $this->__settings['voting']) { ?>
 		  	<div class="sx-rate-div">
-			    <span class="sx-rate-title <?php echo ((int)$this->__user_rate != "" ? "hide" : ""); ?>"><?php echo $instance['rate_label']; ?></span>
+			    <span class="sx-rate-title <?php echo ($this->__user_rate != 0 ? "hide" : ""); ?>"><?php echo $instance['rate_label']; ?></span>
 				<span class="sx-rate-title-thanks "><?php echo $instance['thanks_label']; ?></span>
-			    <form class="sx-rate-form <?php echo ((int)$this->__user_rate != "" ? "rated" : ""); ?>" >
+			    <form class="sx-rate-form <?php echo ($this->__user_rate != 0 ? "rated" : ""); ?>" >
 				    <div class="sx-star-wrapper">
 			<?php
 
 			for ($i = 5; $i > 0; $i--) {
-				echo "<input type='radio' id='star$i-$id' name='rating' value='$i'" . ((int)$this->__user_rate == $i ? "checked" : "") . " /><label class = 'full' for='star$i-$id' title='$i stars'></label>" . PHP_EOL;
+				echo "<input type='radio' id='star$i-$id' name='rating' value='$i'" . ($this->__user_rate == $i ? "checked" : "") . " /><label class = 'full' for='star$i-$id' title='$i stars'></label>" . PHP_EOL;
 			}
 
 			?>
@@ -229,9 +231,12 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 		$instance['resubmit_label'] = (!empty($new_instance['resubmit_label'])) ? strip_tags($new_instance['resubmit_label']) : __('Change your rating', 'sx');
 		$instance['votes_label']    = (!empty($new_instance['votes_label'])) ? strip_tags($new_instance['votes_label']) : __('based on # votes', 'sx');
 
-		if (!empty($new_instance['star_color'])) { //todo: needs better code here
-			if (function_exists('hex2hsl')) {
-				$hsl = hex2hsl($new_instance['star_color']);
+		$star_color=sanitize_hex_color($new_instance['star_color']);
+		$inactive_color=sanitize_hex_color($new_instance['inactive_color']);
+
+		if (!empty($star_color)) {
+			if (function_exists('hex2hsl') && function_exists('hsl2hex')) {
+				$hsl = hex2hsl($star_color);
 
 				if ($hsl[2] > 0.55) { //auto hightlight color +-20% lightness
 					$hsl[2] = $hsl[2] - 0.2;
@@ -239,19 +244,17 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 					$hsl[2] = $hsl[2] + 0.2;
 				}
 				$instance['highlight_color'] = hsl2hex($hsl);
-				$instance['star_color']      = '#' . validate_hex($new_instance['star_color']);
-				$instance['inactive_color']  = (!empty($new_instance['inactive_color'])) ? '#' . validate_hex($new_instance['inactive_color']) : 'inherit';
 			} else {
-				$instance['highlight_color'] = $new_instance['star_color'];
-				$instance['star_color']      = $new_instance['star_color'];
-				$instance['inactive_color']  = (!empty($new_instance['inactive_color'])) ? $new_instance['inactive_color'] : 'inherit';
+				$instance['highlight_color'] = $star_color;
 			}
+			$instance['star_color']      = $star_color;
 
 		} else {
 			$instance['star_color']      = 'inherit';
 			$instance['highlight_color'] = 'inherit';
-			$instance['inactive_color']  = (!empty($new_instance['inactive_color'])) ? $new_instance['inactive_color'] : 'inherit';
 		}
+		$instance['inactive_color']  = (!empty($inactive_color) )? $inactive_color : 'inherit';
+
 
 		$instance['show_mo']     = (!empty($new_instance['show_mo']) && $new_instance['show_mo'] == 'yes') ? true : false;
 		$instance['show_stars']  = (!empty($new_instance['show_stars']) && $new_instance['show_stars'] == 'yes') ? true : false;
@@ -270,8 +273,9 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 		}
 
 		$result       = array('success' => 1, 'message' => '');
-		$ratingCookie = isset($_COOKIE['sx_rating']) ? unserialize(base64_decode($_COOKIE['sx_rating'])) : "";
-		$star         = isset($_POST['rating']) ? $_POST['rating'] : 0;
+		$ratingCookie = isset($_COOKIE['sx_rating']) ? intval(base64_decode($_COOKIE['sx_rating'])) : 0;
+
+		$star         = isset($_POST['rating']) ? intval($_POST['rating']) : 0;
 		$expire       = ($this->__settings['expire'] != 0) ? time() + $this->__settings['expire'] * 365 * DAY_IN_SECONDS : "";
 
 		if (!$this->__ratings) {
@@ -282,7 +286,9 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 			$result['message'] = __('Please choose a different rating!', 'sx');
 		} else {
 
-			if ($ratingCookie !== "") {
+			if ($ratingCookie) {
+				//var_dump($ratingCookie);
+				//exit;
 				if ($this->__ratings[$ratingCookie - 1] != 0) { // if its 0 there is propably a reset
 					$this->__ratings[$ratingCookie - 1] = $this->__ratings[$ratingCookie - 1] - 1; //delete one if it is re-rated
 				}
@@ -294,8 +300,8 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 			if ($r) {
 				$result['message'] = __('Thank You for Your Rating!', 'sx');
 				$ratingCookie      = $star;
-				setcookie('sx_rating', base64_encode(serialize($ratingCookie)), $expire, COOKIEPATH, COOKIE_DOMAIN);
-				$_COOKIE['sx_rating'] = base64_encode(serialize($ratingCookie));
+				setcookie('sx_rating', base64_encode($ratingCookie), $expire, COOKIEPATH, COOKIE_DOMAIN);
+				$_COOKIE['sx_rating'] = base64_encode($ratingCookie);
 				$this->__calculate();
 				$result['mo']           = number_format($this->__mo, 1, '.', '');
 				$result['total_number'] = $this->__total_number;
@@ -332,7 +338,7 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 		$this->__total_number = $total_number;
 		$this->__total_rate   = $total_rate;
 
-		$this->__user_rate = isset($_COOKIE['sx_rating']) ? unserialize(base64_decode($_COOKIE['sx_rating'])) : "";
+		$this->__user_rate = isset($_COOKIE['sx_rating']) ? intval(base64_decode($_COOKIE['sx_rating'])) : "";
 	}
 
 	/**
@@ -379,12 +385,12 @@ class Sx_Site_Rating_Widget extends WP_Widget {
 
 }
 
-function register_sx_widget() {
+function  sx_rating_register_sx_widget() {
 	register_widget('Sx_Site_Rating_Widget');
 }
-add_action('widgets_init', 'register_sx_widget');
+add_action('widgets_init', 'sx_rating_register_sx_widget');
 
-function load_color_picker($hook) {
+function  sx_rating_load_color_picker($hook) {
 	if ('widgets.php' != $hook) {
 		return;
 	}
@@ -393,4 +399,4 @@ function load_color_picker($hook) {
 	wp_enqueue_script('wp-color-picker');
 	wp_enqueue_script('underscore');
 }
-add_action('admin_enqueue_scripts', 'load_color_picker');
+add_action('admin_enqueue_scripts', 'sx_rating_load_color_picker');

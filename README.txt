@@ -49,3 +49,12 @@ General Settings include:
 1. Widget look with the twenty twenty theme
 2. Settings - View Ratings
 3. Settings - Settings Page
+
+== Changelog ==
+
+= 0.9.2 =
+* fixed submission issues.
+
+
+= 0.9.1 =
+* initial submission.
