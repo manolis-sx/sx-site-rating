@@ -143,7 +143,7 @@ function sx_rating_settings() {
 	settings_errors('sx_rating_settings');
 	settings_fields('sx_rating_settings');
 	do_settings_sections('sx_rating_settings');
-	submit_button(__('Save Settings', 'sx'), 'primary large', );
+	submit_button(__('Save Settings', 'sx'), 'primary large');
 	?>
 
 		</form>
